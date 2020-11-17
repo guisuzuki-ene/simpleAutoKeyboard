@@ -1,33 +1,48 @@
 from pynput.keyboard import Key, Controller 
+from RandomWordGenerator import RandomWord
 import time
 import random
+import _thread
 
 keyboard = Controller()
 
-time.sleep(5)
+time.sleep(2)
+working = 0
 
-vec = ['rpg cd', 'rpg rd', 'rpg hunt', 'rpg adv', 'rpg heal', 'rpg buy life potion', 'rpg chop']
+vecAdv = ['rpg cd', 'rpg rd', 'rpg adv', 'rpg heal', 'rpg buy life potion']
+vecHunt = ['rpg cd', 'rpg rd', 'rpg hunt']
+vecWork = ['rpg cd', 'rpg rd', 'rpg chop']
 
-vecIdle = ['nem fodendo', 'mó vacilo', 'vai me taxar n', 'epic guard corno', 'ta trollando ctz',
-'bot eficiente', 'estamos vendo', 'hauehauehauea', 'mano', 'qual foi mano', 'configura isso direito']
+def autoWork(sleep, vec):
+	while(1):
+		for word in vec:
+			for char in word:
+				keyboard.type(char)
+				time.sleep(0.12)
 
-while(1):
-	for word in vec:
-		print(word)
-		for char in word:
-			keyboard.press(char)
-			keyboard.release(char)
-			time.sleep(0.15)
+			keyboard.press(Key.enter)
+		time.sleep(sleep)
+
+def notIdle(sleep):
+	while(1):
+		r = RandomWord().generate()
+		for char in r:
+			keyboard.type(char)
+			time.sleep(0.12)
 
 		keyboard.press(Key.enter)
-		keyboard.release(Key.enter)
-	for idleWord in random.sample(vecIdle, 2):
-		for char in idleWord:
-			keyboard.press(char)
-			keyboard.release(char)
-			time.sleep(0.15)
+		time.sleep(sleep)
 
-		keyboard.press(Key.enter)
-		keyboard.release(Key.enter)
-	
-	time.sleep(random.uniform(60,90))
+start = 1
+
+while(1):	
+	if start == 1:
+		print('entrou')
+		_thread.start_new_thread(autoWork, (random.uniform(75,100), vecHunt))
+		time.sleep(5)
+		_thread.start_new_thread(autoWork, (random.uniform(630,690), vecAdv))
+		time.sleep(8)
+		_thread.start_new_thread(autoWork, (random.uniform(330,390), vecWork))
+		time.sleep(5)
+		_thread.start_new_thread(notIdle, (random.uniform(15,60),))
+		start = 0
